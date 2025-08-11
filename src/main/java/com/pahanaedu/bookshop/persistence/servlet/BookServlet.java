@@ -1,11 +1,11 @@
-package com.pahanaedu.bookshop.servlet;
+package com.pahanaedu.bookshop.persistence.servlet;
 
-import com.pahanaedu.bookshop.dao.BookDAO;
-import com.pahanaedu.bookshop.book.model.Book;
-import com.pahanaedu.bookshop.resource.factory.impl.BookFactoryImpl;
+import com.pahanaedu.bookshop.persistence.dao.BookDAO;
+import com.pahanaedu.bookshop.business.book.model.Book;
+import com.pahanaedu.bookshop.persistence.resource.resource.factory.impl.BookFactoryImpl;
 import com.pahanaedu.bookshop.webservice.BookWebService;
-import com.pahanaedu.bookshop.user.model.User;
-import com.pahanaedu.bookshop.resource.util.DatabaseConnection;
+import com.pahanaedu.bookshop.business.user.model.User;
+import com.pahanaedu.bookshop.persistence.resource.resource.util.DatabaseConnection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

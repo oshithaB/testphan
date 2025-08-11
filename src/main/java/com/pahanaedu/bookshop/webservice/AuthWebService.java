@@ -1,9 +1,9 @@
 package com.pahanaedu.bookshop.webservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pahanaedu.bookshop.common.session.SessionManager;
-import com.pahanaedu.bookshop.dao.UserDAO;
-import com.pahanaedu.bookshop.user.model.User;
+import com.pahanaedu.bookshop.persistence.common.session.SessionManager;
+import com.pahanaedu.bookshop.persistence.dao.UserDAO;
+import com.pahanaedu.bookshop.business.user.model.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

@@ -1,10 +1,10 @@
 package com.pahanaedu.bookshop.webservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pahanaedu.bookshop.bill.model.Bill;
-import com.pahanaedu.bookshop.bill.model.BillItem;
-import com.pahanaedu.bookshop.dao.BillDAO;
-import com.pahanaedu.bookshop.dao.CustomerDAO;
+import com.pahanaedu.bookshop.business.bill.bill.model.Bill;
+import com.pahanaedu.bookshop.business.bill.bill.model.BillItem;
+import com.pahanaedu.bookshop.persistence.dao.BillDAO;
+import com.pahanaedu.bookshop.persistence.dao.CustomerDAO;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

@@ -1,12 +1,12 @@
-package com.pahanaedu.bookshop.servlet;
+package com.pahanaedu.bookshop.persistence.servlet;
 
-import com.pahanaedu.bookshop.dao.CustomerDAO;
-import com.pahanaedu.bookshop.customer.model.Customer;
-import com.pahanaedu.bookshop.resource.factory.impl.CustomerFactoryImpl;
+import com.pahanaedu.bookshop.persistence.dao.CustomerDAO;
+import com.pahanaedu.bookshop.business.customer.model.Customer;
+import com.pahanaedu.bookshop.persistence.resource.resource.factory.impl.CustomerFactoryImpl;
 import com.pahanaedu.bookshop.webservice.CustomerWebService;
-import com.pahanaedu.bookshop.user.model.User;
-import com.pahanaedu.bookshop.resource.util.DatabaseConnection;
-import com.pahanaedu.bookshop.resource.util.EmailUtil;
+import com.pahanaedu.bookshop.business.user.model.User;
+import com.pahanaedu.bookshop.persistence.resource.resource.util.DatabaseConnection;
+import com.pahanaedu.bookshop.persistence.resource.resource.util.EmailUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;

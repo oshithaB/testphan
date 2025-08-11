@@ -1,10 +1,10 @@
 package com.pahanaedu.bookshop.webservice;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pahanaedu.bookshop.customer.dto.CustomerDTO;
-import com.pahanaedu.bookshop.customer.mapper.CustomerMapper;
-import com.pahanaedu.bookshop.customer.model.Customer;
-import com.pahanaedu.bookshop.dao.CustomerDAO;
+import com.pahanaedu.bookshop.business.book.dto.BookDTO;
+import com.pahanaedu.bookshop.business.book.mapper.BookMapper;
+import com.pahanaedu.bookshop.business.book.model.Book;
+import com.pahanaedu.bookshop.persistence.dao.BookDAO;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,16 +16,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * REST Web Service for Customer operations
+ * REST Web Service for Book operations
  * Provides JSON API endpoints for distributed access
  */
-public class CustomerWebService extends HttpServlet {
-    private CustomerDAO customerDAO;
+public class BookWebService extends HttpServlet {
+    private BookDAO bookDAO;
     private ObjectMapper objectMapper;
 
     @Override
     public void init() throws ServletException {
-        customerDAO = new CustomerDAO();
+        bookDAO = new BookDAO();
         objectMapper = new ObjectMapper();
     }
 
@@ -43,53 +43,47 @@ public class CustomerWebService extends HttpServlet {
             Map<String, Object> result = new HashMap<>();
 
             if (pathInfo != null && pathInfo.startsWith("/")) {
-                // RESTful URL: /api/customers/123
+                // RESTful URL: /api/books/123
                 String[] pathParts = pathInfo.split("/");
                 if (pathParts.length > 1) {
-                    int customerId = Integer.parseInt(pathParts[1]);
-                    Customer customer = customerDAO.getCustomerById(customerId);
-                    if (customer != null) {
+                    int bookId = Integer.parseInt(pathParts[1]);
+                    Book book = bookDAO.getBookById(bookId);
+                    if (book != null) {
                         result.put("success", true);
-                        result.put("data", CustomerMapper.toDTO(customer));
+                        result.put("data", BookMapper.toDTO(book));
                     } else {
                         result.put("success", false);
-                        result.put("message", "Customer not found");
+                        result.put("message", "Book not found");
                     }
                 }
             } else if ("list".equals(action)) {
-                // Get all customers
-                List<Customer> customers = customerDAO.getAllCustomers();
+                // Get all books
+                List<Book> books = bookDAO.getAllBooks();
                 result.put("success", true);
-                result.put("data", CustomerMapper.toDTOList(customers));
-                result.put("count", customers.size());
+                result.put("data", BookMapper.toDTOList(books));
+                result.put("count", books.size());
 
             } else if ("search".equals(action)) {
-                // Search customers
+                // Search books
                 String searchTerm = request.getParameter("term");
-                List<Customer> customers = customerDAO.searchCustomers(searchTerm);
+                List<Book> books = bookDAO.searchBooks(searchTerm);
                 result.put("success", true);
-                result.put("data", CustomerMapper.toDTOList(customers));
-                result.put("count", customers.size());
+                result.put("data", BookMapper.toDTOList(books));
+                result.put("count", books.size());
                 result.put("searchTerm", searchTerm);
 
             } else if ("count".equals(action)) {
-                // Get customer count
-                int count = customerDAO.getCustomerCount();
+                // Get book count
+                int count = bookDAO.getBookCount();
                 result.put("success", true);
                 result.put("count", count);
 
-            } else if ("generateAccountNumber".equals(action)) {
-                // Generate new account number
-                String accountNumber = customerDAO.generateAccountNumber();
-                result.put("success", true);
-                result.put("accountNumber", accountNumber);
-
             } else {
-                // Default: return all customers
-                List<Customer> customers = customerDAO.getAllCustomers();
+                // Default: return all books
+                List<Book> books = bookDAO.getAllBooks();
                 result.put("success", true);
-                result.put("data", CustomerMapper.toDTOList(customers));
-                result.put("count", customers.size());
+                result.put("data", BookMapper.toDTOList(books));
+                result.put("count", books.size());
             }
 
             response.getWriter().write(objectMapper.writeValueAsString(result));
@@ -118,106 +112,36 @@ public class CustomerWebService extends HttpServlet {
 
             if (jsonBuffer.length() > 0) {
                 // JSON request body
-                CustomerDTO customerDTO = objectMapper.readValue(jsonBuffer.toString(), CustomerDTO.class);
-                Customer customer = CustomerMapper.toEntity(customerDTO);
+                BookDTO bookDTO = objectMapper.readValue(jsonBuffer.toString(), BookDTO.class);
+                Book book = BookMapper.toEntity(bookDTO);
 
-                if (customerDAO.addCustomer(customer)) {
+                if (bookDAO.addBook(book)) {
                     result.put("success", true);
-                    result.put("message", "Customer added successfully");
-                    result.put("data", CustomerMapper.toDTO(customer));
+                    result.put("message", "Book added successfully");
+                    result.put("data", BookMapper.toDTO(book));
                 } else {
                     result.put("success", false);
-                    result.put("message", "Failed to add customer");
+                    result.put("message", "Failed to add book");
                 }
             } else {
                 // Form data request
-                Customer customer = new Customer();
-                customer.setAccountNumber(request.getParameter("accountNumber"));
-                customer.setName(request.getParameter("name"));
-                customer.setAddress(request.getParameter("address"));
-                customer.setTelephone(request.getParameter("telephone"));
-                customer.setEmail(request.getParameter("email"));
+                Book book = new Book();
+                book.setTitle(request.getParameter("title"));
+                book.setAuthor(request.getParameter("author"));
+                book.setIsbn(request.getParameter("isbn"));
+                book.setCategory(request.getParameter("category"));
+                book.setPrice(new java.math.BigDecimal(request.getParameter("price")));
+                book.setQuantity(Integer.parseInt(request.getParameter("quantity")));
+                book.setDescription(request.getParameter("description"));
 
-                if (customerDAO.addCustomer(customer)) {
+                if (bookDAO.addBook(book)) {
                     result.put("success", true);
-                    result.put("message", "Customer added successfully");
-                    result.put("data", CustomerMapper.toDTO(customer));
+                    result.put("message", "Book added successfully");
+                    result.put("data", BookMapper.toDTO(book));
                 } else {
                     result.put("success", false);
-                    result.put("message", "Failed to add customer");
+                    result.put("message", "Failed to add book");
                 }
-            }
-
-            response.getWriter().write(objectMapper.writeValueAsString(result));
-
-        } catch (Exception e) {
-            handleError(response, e);
-        }
-    }
-
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        try {
-            Map<String, Object> result = new HashMap<>();
-
-            // Read JSON from request body
-            StringBuilder jsonBuffer = new StringBuilder();
-            String line;
-            while ((line = request.getReader().readLine()) != null) {
-                jsonBuffer.append(line);
-            }
-
-            CustomerDTO customerDTO = objectMapper.readValue(jsonBuffer.toString(), CustomerDTO.class);
-            Customer customer = CustomerMapper.toEntity(customerDTO);
-
-            if (customerDAO.updateCustomer(customer)) {
-                result.put("success", true);
-                result.put("message", "Customer updated successfully");
-                result.put("data", CustomerMapper.toDTO(customer));
-            } else {
-                result.put("success", false);
-                result.put("message", "Failed to update customer");
-            }
-
-            response.getWriter().write(objectMapper.writeValueAsString(result));
-
-        } catch (Exception e) {
-            handleError(response, e);
-        }
-    }
-
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        try {
-            Map<String, Object> result = new HashMap<>();
-
-            String pathInfo = request.getPathInfo();
-            if (pathInfo != null && pathInfo.startsWith("/")) {
-                String[] pathParts = pathInfo.split("/");
-                if (pathParts.length > 1) {
-                    int customerId = Integer.parseInt(pathParts[1]);
-
-                    if (customerDAO.deleteCustomer(customerId)) {
-                        result.put("success", true);
-                        result.put("message", "Customer deleted successfully");
-                    } else {
-                        result.put("success", false);
-                        result.put("message", "Failed to delete customer");
-                    }
-                }
-            } else {
-                result.put("success", false);
-                result.put("message", "Customer ID required");
             }
 
             response.getWriter().write(objectMapper.writeValueAsString(result));
